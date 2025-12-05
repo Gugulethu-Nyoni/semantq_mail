@@ -1,0 +1,43 @@
+import { sendEmail } from '@semantq/mail';
+
+// Absolute minimum - just email and message
+await sendEmail('user@example.com', 'Hello there!');
+
+// With template
+await sendEmail('user@example.com', 'welcome', { name: 'John' });
+
+
+
+
+Full Capability (Advanced Case)
+
+
+
+import { MailService } from '@semantq/mail';
+
+const mail = new MailService();
+
+await mail.send({
+  to: ['user1@example.com', 'user2@example.com'],
+  cc: ['manager@example.com'],
+  bcc: ['archive@example.com'],
+  subject: 'Important Update',
+  template: 'notification',
+  templateData: {
+    title: 'System Maintenance',
+    message: 'We will be performing maintenance...',
+    actionUrl: 'https://example.com/details'
+  },
+  attachments: [
+    {
+      filename: 'report.pdf',
+      content: base64String,
+      contentType: 'application/pdf'
+    }
+  ],
+  metadata: {
+    userId: '123',
+    campaign: 'monthly-update'
+  }
+});
+
