@@ -42,6 +42,9 @@ await sendEmail('user@example.com', 'welcome', {
 
 ✔ Auto-Fallback - Falls back to environment variables if config not found
 
+✔ Can send to mutliple recipients, BCC CCC and attachments
+
+
 
 ##  API Reference
 
