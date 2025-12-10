@@ -2,8 +2,7 @@
 
 **Lightweight, Auto-Configuring Email Service for semantq full stack (semantqQL) Projects**
 
-Effortlessly send emails from your semantqQL applications with zero boilerplate. Auto-configures from your existing `server.config.js`, providing both simple and advanced APIs.
-
+Effortlessly send emails from your semantqQL applications with zero boilerplate. Auto-configures from your existing `server.config.js`, providing both simple and advanced emailing sending APIs.
 
 ## Quick Start
 
@@ -12,108 +11,7 @@ Effortlessly send emails from your semantqQL applications with zero boilerplate.
 npm install @semantq/mail
 ```
 
-### Send Your First Email (15 seconds)
-```javascript
-import { sendEmail } from '@semantq/mail';
-
-// Send plain text email
-await sendEmail('user@example.com', 'Welcome to our platform!');
-
-// Use built-in template
-await sendEmail('user@example.com', 'welcome', {
-  name: 'John Doe',
-  confirmationUrl: 'https://app.com/confirm/123'
-});
-```
-
-
-## Features
-
-
-✔ Zero Configuration - Auto-detects your existing `server.config.js`
-
-✔ Simple & Advanced APIs - Choose your level of complexity
-
-✔ Multiple Drivers - Resend, SendGrid, SMTP, and Log (development)
-
-✔ Built-in Templates - Professionally designed templates included
-
-✔ Environment Aware - Development mode prevents accidental sends
-
-✔ Auto-Fallback - Falls back to environment variables if config not found
-
-
-##  API Reference
-
-### Simple API (`sendEmail`)
-
-Perfect for quick email sending:
-
-```javascript
-import { sendEmail } from '@semantq/mail';
-
-// Send plain text
-await sendEmail('user@example.com', 'Your order has shipped!');
-
-// Use template with data
-await sendEmail('user@example.com', 'welcome', {
-  name: 'Sarah',
-  confirmationUrl: 'https://...',
-  nextSteps: ['Complete profile', 'Invite team members']
-});
-
-// Multiple recipients
-await sendEmail(['user1@example.com', 'user2@example.com'], 'Meeting reminder');
-```
-
-### Advanced API (`MailService`)
-
-Full control when you need it:
-
-```javascript
-import { MailService } from '@semantq/mail';
-
-const mail = new MailService();
-
-await mail.send({
-  // Recipients
-  to: ['user1@example.com', 'user2@example.com'],
-  cc: ['manager@example.com'],
-  bcc: ['archive@example.com'],
-  
-  // Content
-  subject: 'Quarterly Report Available',
-  template: 'notification',
-  templateData: {
-    title: 'Q4 Report Published',
-    message: 'The quarterly financial report is now available for review.',
-    actionUrl: 'https://app.com/reports/q4',
-    actionText: 'View Report'
-  },
-  
-  // Attachments
-  attachments: [
-    {
-      filename: 'report.pdf',
-      content: base64String, // Base64 encoded file
-      contentType: 'application/pdf'
-    }
-  ],
-  
-  // Metadata
-  metadata: {
-    userId: '123',
-    campaign: 'quarterly-reports'
-  }
-});
-```
-
-
-
-## ⚙️ Configuration
-
-### Option 1: Use Existing `server.config.js` (Recommended)
-
+### Configuration
 Add email configuration to your existing `semantqQL/server.config.js`:
 
 ```javascript
@@ -135,263 +33,124 @@ export default {
 };
 ```
 
-### Option 2: Environment Variables Only
+## Complete Setup Guide
 
-If no `server.config.js` is found, falls back to environment variables:
+### 1. Generate Email Resources with CLI
 
-```bash
-# Required for Resend
-EMAIL_DRIVER=resend
-RESEND_API_KEY=re_xxxxxxxxxx
-
-# Required for SendGrid
-EMAIL_DRIVER=sendgrid
-SENDGRID_API_KEY=SG.xxxxxxxxxx
-
-# Required for SMTP
-EMAIL_DRIVER=smtp
-SMTP_HOST=smtp.gmail.com
-SMTP_PORT=587
-SMTP_USER=your-email@gmail.com
-SMTP_PASS=your-app-password
-
-# Optional defaults
-EMAIL_FROM=noreply@example.com
-EMAIL_FROM_NAME="Your App Name"
-BRAND_NAME="Your App"
-BRAND_SUPPORT_EMAIL=support@example.com
-```
-
-## Built-in Templates
-
-### 1. **Welcome Template** (`'welcome'`)
-Perfect for onboarding emails.
-
-```javascript
-await sendEmail('user@example.com', 'welcome', {
-  name: 'John Doe',
-  confirmationUrl: 'https://app.com/confirm/123',
-  nextSteps: [
-    'Complete your profile',
-    'Add team members',
-    'Explore tutorials'
-  ]
-});
-```
-
-### 2. **Notification Template** (`'notification'`)
-General purpose notifications with action buttons.
-
-```javascript
-await sendEmail('user@example.com', 'notification', {
-  title: 'Document Approved',
-  message: 'Your proposal has been reviewed and approved by the committee.',
-  actionUrl: 'https://app.com/documents/456',
-  actionText: 'View Document',
-  details: 'Please review the feedback and proceed with next steps.'
-});
-```
-
-### 3. **Simple Template** (`'simple'`)
-Plain text emails with minimal styling.
-
-```javascript
-await sendEmail('user@example.com', 'simple', {
-  message: 'Your password has been changed successfully.\n\nIf you did not make this change, please contact support immediately.',
-  subject: 'Password Changed'
-});
-```
-
-## Drivers
-
-### Resend Driver (Default)
-Uses [Resend.com](https://resend.com) API. Fast, reliable, great deliverability.
-
-```javascript
-// Configuration
-email: {
-  driver: 'resend',
-  resend_api_key: 're_xxxxxxxxxx'
-}
-```
-
-### SMTP Driver
-Traditional SMTP for any email server.
-
-```javascript
-// Configuration
-email: {
-  driver: 'smtp',
-  smtp_host: 'smtp.gmail.com',
-  smtp_port: 587,
-  smtp_user: 'your-email@gmail.com',
-  smtp_pass: 'your-app-password'
-}
-```
-
-### SendGrid Driver
-Uses [SendGrid](https://sendgrid.com) API.
-
-```javascript
-// Configuration
-email: {
-  driver: 'sendgrid',
-  sendgrid_api_key: 'SG.xxxxxxxxxx'
-}
-```
-
-### Log Driver (Development)
-Logs emails to console instead of sending. Perfect for development.
-
-```javascript
-// Configuration
-email: {
-  driver: 'log' // Default in development
-}
-```
-
-
-## Creating Custom Templates
-
-### Method 1: JavaScript Template Class
-
-Create `templates/custom-template.js` in your project:
-
-```javascript
-import BaseTemplate from '@semantq/mail/lib/templates/BaseTemplate.js';
-
-export default class CustomTemplate extends BaseTemplate {
-  render(data) {
-    const name = this.escapeHtml(data.name);
-    
-    return {
-      html: `<h1>Hello ${name}!</h1><p>${data.message}</p>`,
-      text: `Hello ${name}!\n\n${data.message}`,
-      subject: data.subject || 'Custom Email'
-    };
-  }
-}
-
-// Usage
-await sendEmail('user@example.com', 'custom-template', {
-  name: 'John',
-  message: 'This is a custom template!'
-});
-```
-
-### Method 2: Template Files (Future)
-*Planned feature: Support for `.ejs`, `.hbs`, `.mjml` template files.*
-
-
-## Advanced Usage
-
-### Custom Configuration
-```javascript
-import { MailService } from '@semantq/mail';
-
-// Pass custom config (overrides auto-detected)
-const mail = new MailService({
-  email: {
-    driver: 'smtp',
-    smtp_host: 'custom.smtp.com',
-    // ...
-  }
-});
-```
-
-### Check Configuration
-```javascript
-import { MailService } from '@semantq/mail';
-
-const mail = new MailService();
-console.log('Driver:', mail.getDriverName()); // 'resend'
-console.log('Config:', mail.getConfig()); // Full config object
-```
-
-### Template Existence Check
-```javascript
-import { MailService } from '@semantq/mail';
-
-const mail = new MailService();
-console.log(mail.templateExists('welcome')); // true
-console.log(mail.templateExists('custom')); // false (unless you created it)
-```
-
-
-
-## Error Handling
-
-```javascript
-import { sendEmail } from '@semantq/mail';
-
-try {
-  const result = await sendEmail('user@example.com', 'welcome', {
-    name: 'John'
-  });
-  
-  console.log('Email sent:', result.messageId);
-} catch (error) {
-  console.error('Failed to send email:', error.message);
-  
-  // Check error types
-  if (error.message.includes('API key')) {
-    // Handle missing credentials
-  } else if (error.message.includes('template')) {
-    // Handle missing template
-  } else {
-    // Handle other errors
-  }
-}
-```
-
-
-## Development & Testing
-
-### Development Mode
-In development (`NODE_ENV=development`), the LogDriver is used by default:
+Create a complete email service with one command:
 
 ```bash
-NODE_ENV=development npm run dev
-```
-
-Emails are logged to console and HTML is saved to `.email-previews/` directory.
-
-### Testing
-```javascript
-// In your tests
-import { MailService } from '@semantq/mail';
-
-// Mock configuration for tests
-const testMail = new MailService({
-  email: { driver: 'log' }
-});
-
-// Assert email would be sent
-const result = await testMail.send({
-  to: 'test@example.com',
-  subject: 'Test',
-  text: 'Test message'
-});
-
-expect(result.success).toBe(true);
-expect(result.driver).toBe('log');
-```
-
-
-## Integration with SemantQ CLI
-
-### Generate Custom Email Service
-```bash
-# Create a custom email service
+# Generate Welcome email service
 semantq make:mail Welcome
 
-# With custom methods
-semantq make:mail Order --methods "sendConfirmation,sendShippingUpdate"
-
-# Creates: services/WelcomeService.js
+# Creates these files:
+# - semantqQL/services/WelcomeService.js
+# - semantqQL/mail/templates/welcome/welcome.js
+# - semantqQL/mail/test-welcomeMail.js
 ```
 
-Generated service example:
+### Quick Start: Where to Focus
+
+**Focus on this file:** `semantqQL/mail/test-welcomeMail.js`
+
+This is your starting template. Copy the email payload from here and customize it for your actual use case. The file contains complete examples for both basic and full-featured emails.
+
+#### Basic Email Setup
+```javascript
+// In your actual application (anywhere in your codebase)
+import welcomeMail from './services/WelcomeService.js'; // Adjust path as needed
+
+const emailData = {
+  recipients: ['user@example.com','anotherUser@example.com'], // Required: recipient emails
+  subject: 'Basic Welcome Test',     // Required: email subject (customise)
+  template: 'welcome/welcome',      // Required: template path (folder/filename) (leave as is)
+  recipient: {                      // Optional: recipient details for personalization
+    email: 'user@example.com',
+    name: 'User Name'              // Shows as "Hi User Name,"
+  },
+  text: 'This is your email content.' // Content: Use text, html, OR body
+};
+
+await welcomeMail.sendWelcome(emailData);
+```
+
+#### Content Options (Use ONE of these):
+```javascript
+// 1. Plain text
+text: 'Simple text message'
+
+// 2. HTML content  
+html: '<h2>Styled HTML</h2><p>With <strong>formatting</strong></p>'
+
+// 3. Simple body (auto-detects HTML/text)
+body: 'Can be plain text or HTML'
+```
+
+#### Full Featured Setup
+```javascript
+const fullOptions = {
+  recipients: ['customer@example.com', 'backup@example.com'],
+  subject: 'Complete Order Details',
+  template: 'orders/confirmation',
+  recipient: {
+    email: 'customer@example.com',
+    name: 'John Smith'
+  },
+  
+  // Content options (choose one):
+  text: 'Plain text content here',
+  // OR html: '<p>HTML content here</p>',
+  // OR body: 'Simple content here',
+  
+  // Optional features:
+  cc: ['team@example.com'],
+  bcc: ['analytics@example.com'],
+  replyTo: 'support@example.com',
+  from: 'noreply@example.com',
+  fromName: 'Your Company',
+  
+  attachments: [
+    {
+      filename: 'invoice.pdf',
+      content: 'base64String',
+      contentType: 'application/pdf'
+    }
+  ],
+  
+  templateData: {          // Optional template variables
+    themeColor: '#4CAF50', // Changes button colors
+    orderNumber: '12345',
+    orderDate: '2024-12-10'
+  }
+};
+```
+
+#### Important: Import Paths
+The generated test script assumes you're running from `semantqQL` directory. If you're calling emails from elsewhere:
+
+```javascript
+// If running from project root:
+import welcomeMail from './semantqQL/services/WelcomeService.js';
+
+// If running from other directories:
+import welcomeMail from '../services/WelcomeService.js';
+
+// If your service is in a different location:
+import welcomeMail from '../../path/to/services/WelcomeService.js';
+```
+
+**Pro Tip:** Test your import path by running the generated test script first:
+```bash
+cd semantqQL
+node mail/test-welcomeMail.js
+```
+
+Once the test works, copy the payload structure to your actual application code.
+
+
+### 2. Generated Files Structure
+
+**A. Service File** (`semantqQL/services/WelcomeService.js`)
 ```javascript
 import { MailService } from '@semantq/mail';
 
@@ -413,85 +172,454 @@ class WelcomeService {
 export default new WelcomeService();
 ```
 
-## Driver Comparison
+**B. Content Template** (`semantqQL/mail/templates/welcome/welcome.js`)
+```javascript
+// Welcome Email Template
+// This template returns EMPTY content since content comes from payload
 
-| Driver | Best For | Setup Complexity | Cost | Delivery Rate |
-|--|-||||
-| **Resend** | Modern apps, startups | Very Low | $$$ | Excellent |
-| **SendGrid** | Enterprise, high volume | Low | $$$$ | Excellent |
-| **SMTP** | Self-hosted, existing infra | Medium | $-$$ | Varies |
-| **Log** | Development, testing | None | Free | N/A |
+export default {
+    subject: ({ data, brand }) => {
+        return data.subject || `Message from ${brand?.name || 'Our Service'}`;
+    },
 
+    html: ({ data, recipient, brand }) => {
+        // Content comes from payload (text, html, or body fields)
+        return '';
+    },
 
-## Security Notes
+    text: ({ data, recipient, brand }) => {
+        return '';
+    }
+};
+```
 
-1. **API Keys**: Never commit API keys to version control. Use environment variables.
-2. **Rate Limiting**: Implement your own rate limiting for public endpoints.
-3. **Input Validation**: Always validate user input before using in templates.
-4. **BCC for Privacy**: Use BCC when sending to multiple recipients to protect privacy.
+**C. Test Script** (`semantqQL/mail/test-welcomeMail.js`)
+```javascript
+// test-welcomeMail.js
+// Minimal test script for Welcome email service
+// Run: cd semantqQL && node mail/test-welcomeMail.js
 
+import welcomeMail from '../services/WelcomeService.js';
+
+async function testWelcomeMailEmail() {
+  
+  try {
+    // 1. Initialize service
+    await welcomeMail.init();
+    console.log('[STATUS] Service ready | Driver: ' + welcomeMail.mail?.getDriverName());
+
+    // ============================================
+    // CONFIGURATION: EDIT EMAIL ADDRESS BELOW
+    // ============================================
+    
+    // BASIC EXAMPLE - Simple text email
+    const emailData = {
+      recipients: ['test@example.com'], // <--- Replace with your email
+      subject: 'Basic Welcome Test',
+      template: 'welcome/welcome',
+      recipient: {
+        email: 'test@example.com',
+        name: 'Test User'
+      },
+      text: 'This is a test email from the Welcome service.'
+    };
+    
+    // ============================================
+    // CORE FUNCTION: DO NOT ALTER
+    // ============================================
+    console.log('\n[SENDING] Dispatching email...');
+    const result = await welcomeMail.sendWelcome(emailData);
+    
+    if (result.success) {
+      console.log('[RESULT] Basic test: PASS');
+    } else {
+      console.log(`[RESULT] Basic test: FAIL - ${result.message || 'Unknown Error'}`);
+    }
+
+    return result.success;
+
+  } catch (error) {
+    console.error('\n[ERROR] Setup/Runtime Failure:', error.message);
+    return false;
+  }
+}
+
+// Run test
+testWelcomeMailEmail()
+  .then(success => {
+    process.exit(success ? 0 : 1);
+  })
+  .catch(() => {
+    process.exit(1);
+  });
+```
+
+### 3. Customizing Your Email Service
+
+#### A. Update the Service Method
+Edit `services/WelcomeService.js` to add custom logic:
+
+```javascript
+// Add custom methods
+class WelcomeService {
+  constructor() {
+    this.mail = new MailService();
+  }
+
+  async sendWelcome(user) {
+    return this.mail.send({
+      recipients: [user.email],
+      subject: `Welcome to ${this.mail.config.brand?.name}!`,
+      template: 'welcome/welcome',
+      recipient: {
+        email: user.email,
+        name: user.fullName
+      },
+      text: `Welcome ${user.fullName}! We're excited to have you on board.`
+    });
+  }
+
+  async sendPasswordReset(user, resetUrl) {
+    return this.mail.send({
+      recipients: [user.email],
+      subject: 'Reset Your Password',
+      template: 'auth/password-reset',
+      recipient: {
+        email: user.email,
+        name: user.firstName
+      },
+      html: `
+        <h2>Password Reset</h2>
+        <p>Click the link below to reset your password:</p>
+        <a href="${resetUrl}">Reset Password</a>
+      `
+    });
+  }
+}
+```
+
+#### B. Customize Content in Payload
+Content comes from `text`, `html`, or `body` fields in your payload:
+
+```javascript
+// Plain text email
+const emailData = {
+  recipients: ['user@example.com'],
+  subject: 'Basic Email',
+  template: 'welcome/welcome',
+  recipient: { email: 'user@example.com', name: 'John' },
+  text: 'This is a plain text message.'
+};
+
+// HTML email
+const emailData = {
+  recipients: ['user@example.com'],
+  subject: 'Styled Email',
+  template: 'welcome/welcome',
+  recipient: { email: 'user@example.com', name: 'John' },
+  html: `
+    <h2>Welcome John!</h2>
+    <p>This is a custom HTML email with styling.</p>
+    <a href="https://example.com" style="color: #007bff;">Visit Website</a>
+  `
+};
+
+// Using templateData for additional variables
+const emailData = {
+  recipients: ['user@example.com'],
+  subject: 'Order Confirmation',
+  template: 'orders/confirmation',
+  recipient: { email: 'user@example.com', name: 'John' },
+  text: 'Your order #123 has been confirmed.',
+  templateData: {
+    orderNumber: '123',
+    orderDate: '2024-12-10',
+    themeColor: '#4CAF50' // Customizes button colors
+  }
+};
+```
+
+### 4. Email Payload Structure
+
+#### Basic Email Payload
+```javascript
+{
+  // REQUIRED fields
+  recipients: ['user@example.com'],
+  subject: 'Email Subject',
+  template: 'template-name',
+  
+  // OPTIONAL content (use one)
+  text: 'Plain text content',
+  html: '<p>HTML content</p>',
+  body: 'Simple text or HTML',
+  
+  // OPTIONAL recipient info
+  recipient: {
+    email: 'user@example.com',
+    name: 'User Name'
+  },
+  
+  // OPTIONAL template data
+  templateData: {
+    themeColor: '#007bff',
+    customField: 'Any data'
+  },
+  
+  // OPTIONAL email routing
+  cc: ['team@example.com'],
+  bcc: ['archive@example.com'],
+  replyTo: 'support@example.com',
+  from: 'noreply@example.com',
+  fromName: 'Your Brand',
+  
+  // OPTIONAL attachments
+  attachments: [
+    {
+      filename: 'document.pdf',
+      content: 'base64String',
+      contentType: 'application/pdf'
+    }
+  ]
+}
+```
+
+#### Full Featured Example
+```javascript
+const fullOptions = {
+  // REQUIRED: Core email fields
+  recipients: ['customer@example.com', 'backup@example.com'],
+  subject: 'Full Featured Email',
+  template: 'template-name',
+  
+  // OPTIONAL: Content (use one or more)
+  text: 'Plain text version of the email',
+  html: '<p>HTML <strong>version</strong> of the email</p>',
+  
+  // OPTIONAL: Recipient info
+  recipient: {
+    email: 'customer@example.com',
+    name: 'Customer Name'
+  },
+  
+  // OPTIONAL: Email routing
+  cc: ['team@example.com'],
+  bcc: ['analytics@example.com'],
+  replyTo: 'support@example.com',
+  from: 'noreply@example.com',
+  fromName: 'Your Team',
+  
+  // OPTIONAL: Attachments
+  attachments: [
+    {
+      filename: 'test.txt',
+      content: 'This is a test attachment',
+      contentType: 'text/plain'
+    }
+  ],
+  
+  // OPTIONAL: Additional template data
+  templateData: {
+    features: ['Feature 1', 'Feature 2'],
+    customField: 'Any data you need',
+    themeColor: '#667eea'
+  }
+};
+```
+
+### 5. Running Your Email Tests
+
+```bash
+# Run the generated test script
+cd semantqQL
+node mail/test-welcomeMail.js
+
+# Output:
+# [STATUS] Service ready | Driver: resend
+# [SENDING] Dispatching email...
+# [RESULT] Basic test: PASS
+```
+
+### 6. Customizing Email Templates
+
+#### Option A: Custom Content Template
+Create a template that generates content:
+
+```javascript
+// semantqQL/mail/templates/welcome/custom-welcome.js
+export default {
+    subject: ({ data, brand }) => {
+        return data.subject || `Welcome to ${brand?.name}`;
+    },
+
+    html: ({ data, recipient, brand }) => {
+        const recipientName = recipient?.name || 'there';
+        return `
+<div>
+    <h2>Welcome ${recipientName}!</h2>
+    <p>Thank you for joining ${brand?.name}.</p>
+    ${data.customMessage ? `<p>${data.customMessage}</p>` : ''}
+</div>
+        `;
+    },
+
+    text: ({ data, recipient, brand }) => {
+        const recipientName = recipient?.name || 'there';
+        return `Welcome ${recipientName}!\n\nThank you for joining ${brand?.name}.`;
+    }
+};
+
+// Usage
+const emailData = {
+  recipients: ['user@example.com'],
+  subject: 'Welcome',
+  template: 'welcome/custom-welcome',
+  recipient: { email: 'user@example.com', name: 'John' },
+  templateData: {
+    customMessage: 'Check out our getting started guide!'
+  }
+};
+```
+
+#### Option B: Use BaseLayout for Consistent Design
+All emails use BaseLayout which provides:
+- Clean, non-boxed design
+- Responsive layout
+- Brand header (optional)
+- Footer with support info
+- Automatic text version generation
+
+Customize via `templateData.themeColor`:
+```javascript
+templateData: {
+  themeColor: '#4CAF50' // Changes button and link colors
+}
+```
+
+## API Reference
+
+### MailService Class
+```javascript
+import { MailService } from '@semantq/mail';
+
+const mail = new MailService();
+
+// Send email
+await mail.send({
+  recipients: ['user@example.com'],
+  subject: 'Test Email',
+  template: 'template-name',
+  text: 'Email content',
+  recipient: { email: 'user@example.com', name: 'User Name' }
+});
+
+// Check driver
+console.log(mail.getDriverName()); // 'resend', 'sendgrid', 'smtp', or 'log'
+
+// Check if using real driver
+console.log(mail.isRealDriver()); // true for resend/sendgrid/smtp, false for log
+```
+
+### Content Sources Priority
+When sending emails, content is determined in this order:
+1. `html` field in payload
+2. `text` field in payload  
+3. `body` field in payload
+4. Template-generated content (if template provides it)
+5. Fallback: "Your message here"
+
+## Configuration Options
+
+### Email Drivers
+```javascript
+// Resend (Recommended)
+email: {
+  driver: 'resend',
+  resend_api_key: 're_xxxxxxxxxx',
+  email_from: 'noreply@example.com',
+  email_from_name: 'Your Brand'
+}
+
+// SendGrid
+email: {
+  driver: 'sendgrid',
+  sendgrid_api_key: 'SG.xxxxxxxxxx'
+}
+
+// SMTP
+email: {
+  driver: 'smtp',
+  smtp_host: 'smtp.gmail.com',
+  smtp_port: 587,
+  smtp_user: 'user@gmail.com',
+  smtp_pass: 'password'
+}
+
+// Log (Development)
+email: {
+  driver: 'log'
+}
+```
+
+### Brand Configuration
+```javascript
+brand: {
+  name: 'Your App Name',
+  support_email: 'support@example.com'
+}
+```
 
 ## Troubleshooting
 
-### "Cannot find server.config.js"
-The package searches in:
-1. `./config/server.config.js`
-2. `./semantqQL/config/server.config.js`
-3. `../config/server.config.js`
+### Emails not sending
+1. Check `server.config.js` has correct email configuration
+2. Verify API keys are set (for Resend/SendGrid)
+3. Check `NODE_ENV` is not forcing log driver
+4. Run test script to verify connectivity
 
-Or set environment variables as fallback.
-
-### "Driver not found"
-Ensure driver name is one of: `resend`, `sendgrid`, `smtp`, `log`
-
-### "Template not found"
-Check template exists:
+### Recipient name not showing
+Ensure `recipient` field includes both email and name:
 ```javascript
-const mail = new MailService();
-console.log(mail.templateExists('template-name'));
+recipient: {
+  email: 'user@example.com',
+  name: 'User Name'  // Required for personalized greeting
+}
 ```
 
-### Emails not sending in production
-1. Check `NODE_ENV` is not `development`
-2. Verify API keys are set
-3. Check driver configuration
+### Content not appearing
+Content must come from `text`, `html`, or `body` fields:
+```javascript
+// WRONG - templateData.message won't show
+templateData: { message: 'Hello' }
 
-
-## Performance Tips
-
-1. **Reuse MailService instance** - Don't create new instance for each email
-2. **Queue bulk sends** - Use `sendBulk` method for large volumes
-3. **Cache templates** - Templates are automatically cached after first load
-4. **Async processing** - Consider background jobs for non-critical emails
-
-
-
-## 🤝 Contributing
-
-Found a bug or have a feature request? Please open an issue on GitHub.
-
-### Development Setup
-```bash
-git clone https://github.com/semantq/mail.git
-cd mail
-npm install
-npm test
+// CORRECT - use text, html, or body
+text: 'Hello'  // or
+html: '<p>Hello</p>'  // or  
+body: 'Hello'
 ```
 
+### Template not found
+Check template path matches structure:
+```javascript
+// Template file: mail/templates/orders/confirmation.js
+template: 'orders/confirmation'  // folder/filename (no .js)
+```
 
-## 📄License
+## Best Practices
 
-MIT © semantqQL Team
+1. **Always include recipient name** for personalized emails
+2. **Use test scripts** to verify email sending before production
+3. **Keep templates simple** - content comes from payload
+4. **Use environment variables** for API keys
+5. **Test with log driver** during development
+6. **Customize via templateData.themeColor** for brand consistency
 
+## License
 
-## 🔗 Links
+MIT © semantq Team
 
-- [SemantQ Documentation](https://semantq.dev)
+## Links
+
+- [semantqQL Documentation](https://github.com/Gugulethu-Nyoni/semantqQL)
 - [GitHub Repository](https://github.com/semantq/mail)
 - [Report Issue](https://github.com/semantq/mail/issues)
-- [Resend Documentation](https://resend.com/docs)
-- [SendGrid Documentation](https://docs.sendgrid.com)
-
-
-
-**Enjoy sending emails with @semantq/mail

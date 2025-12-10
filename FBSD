@@ -19,6 +19,5 @@
     └── templates/
         ├── index.js         # Export all templates
         ├── BaseTemplate.js  # Abstract base template
-        ├── welcome.js       # Welcome email template
-        ├── notification.js  # Notification template
         └── simple.js        # Simple text template
+        └── BaseLayout.js        # Simple text template
