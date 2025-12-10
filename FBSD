@@ -1,0 +1,24 @@
+@semantq/mail/
+├── package.json
+├── README.md
+├── PAD.md                    # Project documentation
+├── index.js                  # Main entry point
+├── .gitignore
+├── .npmignore
+└── lib/
+    ├── MailService.js        # Main service class
+    ├── sendEmail.js          # Convenience function
+    ├── index.js             # Barrel exports
+    ├── drivers/
+    │   ├── index.js         # Export all drivers
+    │   ├── BaseDriver.js    # Abstract base driver
+    │   ├── SMTPDriver.js    # SMTP implementation
+    │   ├── SendGridDriver.js # SendGrid implementation
+    │   ├── ResendDriver.js  # Resend.com implementation
+    │   └── LogDriver.js     # Logging driver for development
+    └── templates/
+        ├── index.js         # Export all templates
+        ├── BaseTemplate.js  # Abstract base template
+        ├── welcome.js       # Welcome email template
+        ├── notification.js  # Notification template
+        └── simple.js        # Simple text template
