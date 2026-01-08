@@ -613,6 +613,7 @@ template: 'orders/confirmation'  // folder/filename (no .js)
 4. **Use environment variables** for API keys
 5. **Test with log driver** during development
 6. **Customize via templateData.themeColor** for brand consistency
+7. **Note that @semantq/auth ships with its own email services**
 
 ## License
 
