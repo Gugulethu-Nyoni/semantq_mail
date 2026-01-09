@@ -581,7 +581,7 @@ brand: {
 Ensure `recipient` field includes both email and name:
 ```javascript
 recipient: {
-  email: 'user@example.com',
+  email: 'someuser@example.com',
   name: 'User Name'  // Required for personalized greeting
 }
 ```
