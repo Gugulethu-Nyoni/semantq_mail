@@ -20,4 +20,4 @@
         ├── index.js         # Export all templates
         ├── BaseTemplate.js  # Abstract base template
         └── simple.js        # Simple text template
-        └── BaseLayout.js        # Simple text template
+        └── BaseLayout.js    # Simple text template (base)
