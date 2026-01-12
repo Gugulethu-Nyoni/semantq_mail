@@ -233,7 +233,7 @@ async function testWelcomeMailEmail() {
     if (result.success) {
       console.log('[RESULT] Basic test: PASS');
     } else {
-      console.log(`[RESULT] Basic test: FAIL - ${result.message || 'Unknown Error'}`);
+      console.log(`[RESULT] Basic test: FAILED TEST - ${result.message || 'Unknown Error'}`);
     }
 
     return result.success;
