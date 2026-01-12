@@ -225,7 +225,7 @@ async function testWelcomeMailEmail() {
     };
     
     // ============================================
-    // CORE FUNCTION: DO NOT ALTER
+    // CORE FUNCTION: DO NOT ALTER CORE CODE HERE
     // ============================================
     console.log('\n[SENDING] Dispatching email...');
     const result = await welcomeMail.sendWelcome(emailData);
