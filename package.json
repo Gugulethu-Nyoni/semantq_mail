@@ -1,6 +1,6 @@
 {
   "name": "@semantq/mail",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "Lightweight email service for semantqQL projects",
   "type": "module",
   "main": "index.js",
